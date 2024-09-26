@@ -7,7 +7,10 @@
  */
 namespace OCA\FederatedFileSharing\Tests;
 
+use OCA\FederatedFileSharing\AddressHandler;
 use OCA\FederatedFileSharing\Controller\RequestHandlerController;
+use OCA\FederatedFileSharing\FederatedShareProvider;
+use OCA\FederatedFileSharing\Notifications;
 use OCP\AppFramework\Http\DataResponse;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Federation\ICloudFederationFactory;
@@ -19,6 +22,7 @@ use OCP\IDBConnection;
 use OCP\IRequest;
 use OCP\IUserManager;
 use OCP\Share;
+use OCP\Share\IManager;
 use OCP\Share\IShare;
 use Psr\Log\LoggerInterface;
 
@@ -39,13 +43,13 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 	/** @var RequestHandlerController */
 	private $requestHandler;
 
-	/** @var \OCA\FederatedFileSharing\FederatedShareProvider|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var FederatedShareProvider|\PHPUnit\Framework\MockObject\MockObject */
 	private $federatedShareProvider;
 
-	/** @var \OCA\FederatedFileSharing\Notifications|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var Notifications|\PHPUnit\Framework\MockObject\MockObject */
 	private $notifications;
 
-	/** @var \OCA\FederatedFileSharing\AddressHandler|\PHPUnit\Framework\MockObject\MockObject */
+	/** @var AddressHandler|\PHPUnit\Framework\MockObject\MockObject */
 	private $addressHandler;
 
 	/** @var IUserManager|\PHPUnit\Framework\MockObject\MockObject */
@@ -103,7 +107,7 @@ class RequestHandlerControllerTest extends \Test\TestCase {
 		$this->cloudIdManager = $this->createMock(ICloudIdManager::class);
 		$this->request = $this->createMock(IRequest::class);
 		$this->connection = $this->createMock(IDBConnection::class);
-		$this->shareManager = $this->createMock(Share\IManager::class);
+		$this->shareManager = $this->createMock(IManager::class);
 		$this->cloudFederationFactory = $this->createMock(ICloudFederationFactory::class);
 		$this->cloudFederationProviderManager = $this->createMock(ICloudFederationProviderManager::class);
 		$this->cloudFederationProvider = $this->createMock(ICloudFederationProvider::class);

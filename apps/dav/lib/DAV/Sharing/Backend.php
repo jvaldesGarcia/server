@@ -183,13 +183,13 @@ abstract class Backend {
 		foreach ($shares as $share) {
 			$acl[] = [
 				'privilege' => '{DAV:}read',
-				'principal' => $share['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}principal'],
+				'principal' => $share['{' . Plugin::NS_OWNCLOUD . '}principal'],
 				'protected' => true,
 			];
 			if (!$share['readOnly']) {
 				$acl[] = [
 					'privilege' => '{DAV:}write',
-					'principal' => $share['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}principal'],
+					'principal' => $share['{' . Plugin::NS_OWNCLOUD . '}principal'],
 					'protected' => true,
 				];
 			} elseif (in_array($this->service->getResourceType(), ['calendar','addressbook'])) {
@@ -197,7 +197,7 @@ abstract class Backend {
 				// so users can change the visibility.
 				$acl[] = [
 					'privilege' => '{DAV:}write-properties',
-					'principal' => $share['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}principal'],
+					'principal' => $share['{' . Plugin::NS_OWNCLOUD . '}principal'],
 					'protected' => true,
 				];
 			}

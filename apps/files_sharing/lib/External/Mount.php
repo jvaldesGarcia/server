@@ -13,7 +13,7 @@ use OCA\Files_Sharing\ISharedMountPoint;
 class Mount extends MountPoint implements MoveableMount, ISharedMountPoint {
 
 	/**
-	 * @var \OCA\Files_Sharing\External\Manager
+	 * @var Manager
 	 */
 	protected $manager;
 
@@ -21,7 +21,7 @@ class Mount extends MountPoint implements MoveableMount, ISharedMountPoint {
 	 * @param string|\OC\Files\Storage\Storage $storage
 	 * @param string $mountpoint
 	 * @param array $options
-	 * @param \OCA\Files_Sharing\External\Manager $manager
+	 * @param Manager $manager
 	 * @param \OC\Files\Storage\StorageFactory $loader
 	 */
 	public function __construct($storage, $mountpoint, $options, $manager, $loader = null) {

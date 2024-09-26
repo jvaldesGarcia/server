@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace OCA\User_LDAP\Migration;
 
 use Closure;
+use OCP\DB\Exception;
 use OCP\DB\ISchemaWrapper;
 use OCP\DB\Types;
 use OCP\IDBConnection;
@@ -95,7 +96,7 @@ class Version1190Date20230706134108 extends SimpleMigrationStep {
 					;
 
 					$insert->executeStatement();
-				} catch (\OCP\DB\Exception $e) {
+				} catch (Exception $e) {
 					/*
 					 * If it fails on unique constaint violation it may just be left over value from previous half-migration
 					 * If it fails on something else, ignore as well, data will be filled by background job later anyway

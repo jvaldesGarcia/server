@@ -6,11 +6,17 @@
  */
 namespace OCA\DAV;
 
+use OC\Files\Filesystem;
 use OCA\DAV\AppInfo\PluginManager;
 use OCA\DAV\BulkUpload\BulkUploadPlugin;
+use OCA\DAV\CalDAV\BirthdayCalendar\EnablePlugin;
 use OCA\DAV\CalDAV\BirthdayService;
 use OCA\DAV\CalDAV\DefaultCalendarValidator;
+use OCA\DAV\CalDAV\EventComparisonService;
+use OCA\DAV\CalDAV\ICSExportPlugin\ICSExportPlugin;
+use OCA\DAV\CalDAV\Publishing\PublishPlugin;
 use OCA\DAV\CalDAV\Schedule\IMipPlugin;
+use OCA\DAV\CalDAV\Schedule\IMipService;
 use OCA\DAV\CalDAV\Security\RateLimitingPlugin;
 use OCA\DAV\CalDAV\Validation\CalDavValidatePlugin;
 use OCA\DAV\CardDAV\HasPhotoPlugin;
@@ -21,6 +27,7 @@ use OCA\DAV\CardDAV\Security\CardDavRateLimitingPlugin;
 use OCA\DAV\CardDAV\Validation\CardDavValidatePlugin;
 use OCA\DAV\Comments\CommentsPlugin;
 use OCA\DAV\Connector\Sabre\AnonymousOptionsPlugin;
+use OCA\DAV\Connector\Sabre\AppleQuirksPlugin;
 use OCA\DAV\Connector\Sabre\Auth;
 use OCA\DAV\Connector\Sabre\BearerAuth;
 use OCA\DAV\Connector\Sabre\BlockLegacyClientPlugin;
@@ -30,9 +37,12 @@ use OCA\DAV\Connector\Sabre\CommentPropertiesPlugin;
 use OCA\DAV\Connector\Sabre\CopyEtagHeaderPlugin;
 use OCA\DAV\Connector\Sabre\DavAclPlugin;
 use OCA\DAV\Connector\Sabre\DummyGetResponsePlugin;
+use OCA\DAV\Connector\Sabre\ExceptionLoggerPlugin;
 use OCA\DAV\Connector\Sabre\FakeLockerPlugin;
 use OCA\DAV\Connector\Sabre\FilesPlugin;
 use OCA\DAV\Connector\Sabre\FilesReportPlugin;
+use OCA\DAV\Connector\Sabre\LockPlugin;
+use OCA\DAV\Connector\Sabre\MaintenancePlugin;
 use OCA\DAV\Connector\Sabre\PropfindCompressionPlugin;
 use OCA\DAV\Connector\Sabre\QuotaPlugin;
 use OCA\DAV\Connector\Sabre\RequestIdHeaderPlugin;
@@ -44,6 +54,7 @@ use OCA\DAV\DAV\ViewOnlyPlugin;
 use OCA\DAV\Events\SabrePluginAddEvent;
 use OCA\DAV\Events\SabrePluginAuthInitEvent;
 use OCA\DAV\Files\ErrorPagePlugin;
+use OCA\DAV\Files\FileSearchBackend;
 use OCA\DAV\Files\LazySearchBackend;
 use OCA\DAV\Profiler\ProfilerPlugin;
 use OCA\DAV\Provisioning\Apple\AppleProvisioningPlugin;
@@ -52,6 +63,8 @@ use OCA\DAV\Upload\ChunkingPlugin;
 use OCA\DAV\Upload\ChunkingV2Plugin;
 use OCA\Theming\ThemingDefaults;
 use OCP\AppFramework\Http\Response;
+use OCP\AppFramework\Utility\ITimeFactory;
+use OCP\Defaults;
 use OCP\Diagnostics\IEventLogger;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Files\IFilenameValidator;
@@ -61,8 +74,10 @@ use OCP\IConfig;
 use OCP\IPreview;
 use OCP\IRequest;
 use OCP\IUserSession;
+use OCP\Mail\IMailer;
 use OCP\Profiler\IProfiler;
 use OCP\SabrePluginEvent;
+use OCP\Share\IManager;
 use Psr\Log\LoggerInterface;
 use Sabre\CardDAV\VCFExportPlugin;
 use Sabre\DAV\Auth\Plugin;
@@ -93,9 +108,9 @@ class Server {
 		$this->server = new \OCA\DAV\Connector\Sabre\Server(new CachingTree($root));
 
 		// Add maintenance plugin
-		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\MaintenancePlugin(\OC::$server->getConfig(), \OC::$server->getL10N('dav')));
+		$this->server->addPlugin(new MaintenancePlugin(\OC::$server->getConfig(), \OC::$server->getL10N('dav')));
 
-		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\AppleQuirksPlugin());
+		$this->server->addPlugin(new AppleQuirksPlugin());
 
 		// Backends
 		$authBackend = new Auth(
@@ -143,8 +158,8 @@ class Server {
 			$this->server->addPlugin(new DummyGetResponsePlugin());
 		}
 
-		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\ExceptionLoggerPlugin('webdav', $logger));
-		$this->server->addPlugin(new \OCA\DAV\Connector\Sabre\LockPlugin());
+		$this->server->addPlugin(new ExceptionLoggerPlugin('webdav', $logger));
+		$this->server->addPlugin(new LockPlugin());
 		$this->server->addPlugin(new \Sabre\DAV\Sync\Plugin());
 
 		// acl
@@ -161,7 +176,7 @@ class Server {
 		if ($this->requestIsForSubtree(['calendars', 'public-calendars', 'system-calendars', 'principals'])) {
 			$this->server->addPlugin(new DAV\Sharing\Plugin($authBackend, \OC::$server->getRequest(), \OC::$server->getConfig()));
 			$this->server->addPlugin(new \OCA\DAV\CalDAV\Plugin());
-			$this->server->addPlugin(new \OCA\DAV\CalDAV\ICSExportPlugin\ICSExportPlugin(\OC::$server->getConfig(), $logger));
+			$this->server->addPlugin(new ICSExportPlugin(\OC::$server->getConfig(), $logger));
 			$this->server->addPlugin(new \OCA\DAV\CalDAV\Schedule\Plugin(\OC::$server->getConfig(), \OC::$server->get(LoggerInterface::class), \OC::$server->get(DefaultCalendarValidator::class)));
 
 			$this->server->addPlugin(\OC::$server->get(\OCA\DAV\CalDAV\Trashbin\Plugin::class));
@@ -171,7 +186,7 @@ class Server {
 			}
 
 			$this->server->addPlugin(new \Sabre\CalDAV\Notifications\Plugin());
-			$this->server->addPlugin(new \OCA\DAV\CalDAV\Publishing\PublishPlugin(
+			$this->server->addPlugin(new PublishPlugin(
 				\OC::$server->getConfig(),
 				\OC::$server->getURLGenerator()
 			));
@@ -241,7 +256,7 @@ class Server {
 			$userSession = \OC::$server->getUserSession();
 			$user = $userSession->getUser();
 			if ($user !== null) {
-				$view = \OC\Files\Filesystem::getView();
+				$view = Filesystem::getView();
 				$config = \OCP\Server::get(IConfig::class);
 				$this->server->addPlugin(
 					new FilesPlugin(
@@ -280,7 +295,7 @@ class Server {
 
 				// TODO: switch to LazyUserFolder
 				$userFolder = \OC::$server->getUserFolder();
-				$shareManager = \OCP\Server::get(\OCP\Share\IManager::class);
+				$shareManager = \OCP\Server::get(IManager::class);
 				$this->server->addPlugin(new SharesPlugin(
 					$this->server->tree,
 					$userSession,
@@ -293,14 +308,14 @@ class Server {
 				));
 				if (\OC::$server->getConfig()->getAppValue('dav', 'sendInvitations', 'yes') === 'yes') {
 					$this->server->addPlugin(new IMipPlugin(
-						\OC::$server->get(\OCP\IConfig::class),
-						\OC::$server->get(\OCP\Mail\IMailer::class),
+						\OC::$server->get(IConfig::class),
+						\OC::$server->get(IMailer::class),
 						\OC::$server->get(LoggerInterface::class),
-						\OC::$server->get(\OCP\AppFramework\Utility\ITimeFactory::class),
-						\OC::$server->get(\OCP\Defaults::class),
+						\OC::$server->get(ITimeFactory::class),
+						\OC::$server->get(Defaults::class),
 						$userSession,
-						\OC::$server->get(\OCA\DAV\CalDAV\Schedule\IMipService::class),
-						\OC::$server->get(\OCA\DAV\CalDAV\EventComparisonService::class),
+						\OC::$server->get(IMipService::class),
+						\OC::$server->get(EventComparisonService::class),
 						\OC::$server->get(\OCP\Mail\Provider\IManager::class)
 					));
 				}
@@ -317,7 +332,7 @@ class Server {
 						$userFolder,
 						\OC::$server->getAppManager()
 					));
-					$lazySearchBackend->setBackend(new \OCA\DAV\Files\FileSearchBackend(
+					$lazySearchBackend->setBackend(new FileSearchBackend(
 						$this->server->tree,
 						$user,
 						\OC::$server->getRootFolder(),
@@ -332,7 +347,7 @@ class Server {
 						)
 					);
 				}
-				$this->server->addPlugin(new \OCA\DAV\CalDAV\BirthdayCalendar\EnablePlugin(
+				$this->server->addPlugin(new EnablePlugin(
 					\OC::$server->getConfig(),
 					\OC::$server->query(BirthdayService::class),
 					$user

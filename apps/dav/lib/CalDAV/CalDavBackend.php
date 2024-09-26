@@ -189,7 +189,7 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 		private LoggerInterface $logger,
 		private IEventDispatcher $dispatcher,
 		private IConfig $config,
-		private Sharing\Backend $calendarSharingBackend,
+		private Backend $calendarSharingBackend,
 		private bool $legacyEndpoint = false,
 	) {
 	}
@@ -3117,7 +3117,7 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 
 	/**
 	 * @param boolean $value
-	 * @param \OCA\DAV\CalDAV\Calendar $calendar
+	 * @param Calendar $calendar
 	 * @return string|null
 	 */
 	public function setPublishStatus($value, $calendar) {
@@ -3152,7 +3152,7 @@ class CalDavBackend extends AbstractBackend implements SyncSupport, Subscription
 	}
 
 	/**
-	 * @param \OCA\DAV\CalDAV\Calendar $calendar
+	 * @param Calendar $calendar
 	 * @return mixed
 	 */
 	public function getPublishStatus($calendar) {

@@ -13,6 +13,7 @@ use GuzzleHttp\Exception\ConnectException;
 use GuzzleHttp\Exception\RequestException;
 use OC\Files\Storage\DAV;
 use OC\ForbiddenException;
+use OC\Share\Share;
 use OCA\Files_Sharing\External\Manager as ExternalShareManager;
 use OCA\Files_Sharing\ISharedStorage;
 use OCP\AppFramework\Http;
@@ -31,6 +32,7 @@ use OCP\OCM\Exceptions\OCMArgumentException;
 use OCP\OCM\Exceptions\OCMProviderException;
 use OCP\OCM\IOCMDiscoveryService;
 use OCP\Server;
+use OCP\Util;
 use Psr\Log\LoggerInterface;
 
 class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, IReliableEtagStorage {
@@ -144,7 +146,7 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 		if (!isset($this->scanner)) {
 			$this->scanner = new Scanner($storage);
 		}
-		/** @var \OCA\Files_Sharing\External\Scanner */
+		/** @var Scanner */
 		return $this->scanner;
 	}
 
@@ -337,7 +339,7 @@ class Storage extends DAV implements ISharedStorage, IDisableEncryptionStorage, 
 	}
 
 	public function isSharable($path): bool {
-		if (\OCP\Util::isSharingDisabledForUser() || !\OC\Share\Share::isResharingAllowed()) {
+		if (Util::isSharingDisabledForUser() || !Share::isResharingAllowed()) {
 			return false;
 		}
 		return (bool)($this->getPermissions($path) & Constants::PERMISSION_SHARE);

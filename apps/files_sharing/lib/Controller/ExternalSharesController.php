@@ -6,6 +6,7 @@
  */
 namespace OCA\Files_Sharing\Controller;
 
+use OCA\Files_Sharing\External\Manager;
 use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http\Attribute\NoAdminRequired;
 use OCP\AppFramework\Http\Attribute\PublicPage;
@@ -24,7 +25,7 @@ class ExternalSharesController extends Controller {
 	public function __construct(
 		string $appName,
 		IRequest $request,
-		private \OCA\Files_Sharing\External\Manager $externalManager,
+		private Manager $externalManager,
 		private IClientService $clientService,
 		private IConfig $config,
 	) {

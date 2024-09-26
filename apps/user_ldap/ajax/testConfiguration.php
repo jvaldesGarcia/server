@@ -1,5 +1,9 @@
 <?php
 
+use OCA\User_LDAP\Connection;
+use OCA\User_LDAP\LDAP;
+use OCP\Util;
+
 /**
  * SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
  * SPDX-FileCopyrightText: 2016 ownCloud, Inc.
@@ -10,10 +14,10 @@
 \OC_JSON::checkAppEnabled('user_ldap');
 \OC_JSON::callCheck();
 
-$l = \OCP\Util::getL10N('user_ldap');
+$l = Util::getL10N('user_ldap');
 
-$ldapWrapper = new OCA\User_LDAP\LDAP();
-$connection = new \OCA\User_LDAP\Connection($ldapWrapper, $_POST['ldap_serverconfig_chooser']);
+$ldapWrapper = new LDAP();
+$connection = new Connection($ldapWrapper, $_POST['ldap_serverconfig_chooser']);
 
 
 try {

@@ -25,7 +25,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 class ExternalShareControllerTest extends \Test\TestCase {
 	/** @var IRequest */
 	private $request;
-	/** @var \OCA\Files_Sharing\External\Manager */
+	/** @var Manager */
 	private $externalManager;
 	/** @var IConfig|MockObject */
 	private $config;

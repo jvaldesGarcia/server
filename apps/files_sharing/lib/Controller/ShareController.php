@@ -19,12 +19,16 @@ use OCP\AppFramework\AuthPublicShareController;
 use OCP\AppFramework\Http\Attribute\NoCSRFRequired;
 use OCP\AppFramework\Http\Attribute\OpenAPI;
 use OCP\AppFramework\Http\Attribute\PublicPage;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\Constants;
 use OCP\Defaults;
 use OCP\EventDispatcher\IEventDispatcher;
+use OCP\Files\File;
 use OCP\Files\Folder;
 use OCP\Files\IRootFolder;
+use OCP\Files\Node;
 use OCP\Files\NotFoundException;
 use OCP\IConfig;
 use OCP\IL10N;
@@ -47,7 +51,7 @@ use OCP\Share\IShare;
  */
 #[OpenAPI(scope: OpenAPI::SCOPE_IGNORE)]
 class ShareController extends AuthPublicShareController {
-	protected ?Share\IShare $share = null;
+	protected ?IShare $share = null;
 
 	public const SHARE_ACCESS = 'access';
 	public const SHARE_AUTH = 'auth';
@@ -218,7 +222,7 @@ class ShareController extends AuthPublicShareController {
 		$itemType = $itemSource = $uidOwner = '';
 		$token = $share;
 		$exception = null;
-		if ($share instanceof \OCP\Share\IShare) {
+		if ($share instanceof IShare) {
 			try {
 				$token = $share->getToken();
 				$uidOwner = $share->getSharedBy();
@@ -262,7 +266,7 @@ class ShareController extends AuthPublicShareController {
 	 * @param Share\IShare $share
 	 * @return bool
 	 */
-	private function validateShare(\OCP\Share\IShare $share) {
+	private function validateShare(IShare $share) {
 		// If the owner is disabled no access to the link is granted
 		$owner = $this->userManager->get($share->getShareOwner());
 		if ($owner === null || !$owner->isEnabled()) {
@@ -315,7 +319,7 @@ class ShareController extends AuthPublicShareController {
 
 		// We can't get the path of a file share
 		try {
-			if ($shareNode instanceof \OCP\Files\File && $path !== '') {
+			if ($shareNode instanceof File && $path !== '') {
 				$this->emitAccessShareHook($share, 404, 'Share not found');
 				$this->emitShareAccessEvent($share, self::SHARE_ACCESS, 404, 'Share not found');
 				throw new NotFoundException($this->l10n->t('This share does not exist or is no longer available'));
@@ -350,8 +354,8 @@ class ShareController extends AuthPublicShareController {
 
 		$share = $this->shareManager->getShareByToken($token);
 
-		if (!($share->getPermissions() & \OCP\Constants::PERMISSION_READ)) {
-			return new \OCP\AppFramework\Http\DataResponse('Share has no read permission');
+		if (!($share->getPermissions() & Constants::PERMISSION_READ)) {
+			return new DataResponse('Share has no read permission');
 		}
 
 		$files_list = null;
@@ -376,7 +380,7 @@ class ShareController extends AuthPublicShareController {
 
 
 		// Single file share
-		if ($share->getNode() instanceof \OCP\Files\File) {
+		if ($share->getNode() instanceof File) {
 			// Single file download
 			$this->singleFileDownloaded($share, $share->getNode());
 		}
@@ -398,7 +402,7 @@ class ShareController extends AuthPublicShareController {
 
 			$originalSharePath = $userFolder->getRelativePath($node->getPath());
 
-			if ($node instanceof \OCP\Files\File) {
+			if ($node instanceof File) {
 				// Single file download
 				$this->singleFileDownloaded($share, $share->getNode());
 			} else {
@@ -465,7 +469,7 @@ class ShareController extends AuthPublicShareController {
 	 * @param \OCP\Files\Folder $node
 	 * @throws NotFoundException when trying to download a folder or multiple files of a "hide download" share
 	 */
-	protected function fileListDownloaded(Share\IShare $share, array $files_list, \OCP\Files\Folder $node) {
+	protected function fileListDownloaded(IShare $share, array $files_list, Folder $node) {
 		if ($share->getHideDownload() && count($files_list) > 1) {
 			throw new NotFoundException('Downloading more than 1 file');
 		}
@@ -482,7 +486,7 @@ class ShareController extends AuthPublicShareController {
 	 * @param Share\IShare $share
 	 * @throws NotFoundException when trying to download a folder of a "hide download" share
 	 */
-	protected function singleFileDownloaded(Share\IShare $share, \OCP\Files\Node $node) {
+	protected function singleFileDownloaded(IShare $share, Node $node) {
 		if ($share->getHideDownload() && $node instanceof Folder) {
 			throw new NotFoundException('Downloading a folder');
 		}
@@ -502,14 +506,14 @@ class ShareController extends AuthPublicShareController {
 		$parameters = [$userPath];
 
 		if ($share->getShareType() === IShare::TYPE_EMAIL) {
-			if ($node instanceof \OCP\Files\File) {
+			if ($node instanceof File) {
 				$subject = Downloads::SUBJECT_SHARED_FILE_BY_EMAIL_DOWNLOADED;
 			} else {
 				$subject = Downloads::SUBJECT_SHARED_FOLDER_BY_EMAIL_DOWNLOADED;
 			}
 			$parameters[] = $share->getSharedWith();
 		} else {
-			if ($node instanceof \OCP\Files\File) {
+			if ($node instanceof File) {
 				$subject = Downloads::SUBJECT_PUBLIC_SHARED_FILE_DOWNLOADED;
 				$parameters[] = $remoteAddressHash;
 			} else {

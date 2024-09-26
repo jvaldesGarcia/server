@@ -8,6 +8,7 @@ namespace OCA\DAV\Tests\Command;
 use OCA\DAV\CalDAV\BirthdayService;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\Command\ListCalendars;
+use OCA\DAV\DAV\Sharing\Plugin;
 use OCP\IUserManager;
 use Symfony\Component\Console\Tester\CommandTester;
 use Test\TestCase;
@@ -99,11 +100,11 @@ class ListCalendarsTest extends TestCase {
 					'uri' => BirthdayService::BIRTHDAY_CALENDAR_URI,
 				],
 				[
-					'{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}read-only' => $readOnly,
+					'{' . Plugin::NS_OWNCLOUD . '}read-only' => $readOnly,
 					'uri' => 'test',
 					'{DAV:}displayname' => 'dp',
-					'{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}owner-principal' => 'owner-principal',
-					'{' . \OCA\DAV\DAV\Sharing\Plugin::NS_NEXTCLOUD . '}owner-displayname' => 'owner-dp',
+					'{' . Plugin::NS_OWNCLOUD . '}owner-principal' => 'owner-principal',
+					'{' . Plugin::NS_NEXTCLOUD . '}owner-displayname' => 'owner-dp',
 				]
 			]);
 

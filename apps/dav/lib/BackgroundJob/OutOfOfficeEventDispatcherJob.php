@@ -14,6 +14,7 @@ use OCA\DAV\Db\AbsenceMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Utility\ITimeFactory;
 use OCP\BackgroundJob\QueuedJob;
+use OCP\DB\Exception;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IUserManager;
 use OCP\User\Events\OutOfOfficeEndedEvent;
@@ -41,7 +42,7 @@ class OutOfOfficeEventDispatcherJob extends QueuedJob {
 
 		try {
 			$absence = $this->absenceMapper->findById($id);
-		} catch (DoesNotExistException|\OCP\DB\Exception $e) {
+		} catch (DoesNotExistException|Exception $e) {
 			$this->logger->error('Failed to dispatch out-of-office event: ' . $e->getMessage(), [
 				'exception' => $e,
 				'argument' => $argument,

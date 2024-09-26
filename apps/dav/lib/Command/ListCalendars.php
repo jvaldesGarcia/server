@@ -7,6 +7,7 @@ namespace OCA\DAV\Command;
 
 use OCA\DAV\CalDAV\BirthdayService;
 use OCA\DAV\CalDAV\CalDavBackend;
+use OCA\DAV\DAV\Sharing\Plugin;
 use OCP\IUserManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -47,7 +48,7 @@ class ListCalendars extends Command {
 			}
 
 			$readOnly = false;
-			$readOnlyIndex = '{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}read-only';
+			$readOnlyIndex = '{' . Plugin::NS_OWNCLOUD . '}read-only';
 			if (isset($calendar[$readOnlyIndex])) {
 				$readOnly = $calendar[$readOnlyIndex];
 			}
@@ -55,8 +56,8 @@ class ListCalendars extends Command {
 			$calendarTableData[] = [
 				$calendar['uri'],
 				$calendar['{DAV:}displayname'],
-				$calendar['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_OWNCLOUD . '}owner-principal'],
-				$calendar['{' . \OCA\DAV\DAV\Sharing\Plugin::NS_NEXTCLOUD . '}owner-displayname'],
+				$calendar['{' . Plugin::NS_OWNCLOUD . '}owner-principal'],
+				$calendar['{' . Plugin::NS_NEXTCLOUD . '}owner-displayname'],
 				$readOnly ? ' x ' : ' ✓ ',
 			];
 		}

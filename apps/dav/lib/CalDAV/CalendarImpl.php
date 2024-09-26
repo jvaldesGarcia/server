@@ -10,6 +10,7 @@ namespace OCA\DAV\CalDAV;
 
 use OCA\DAV\CalDAV\Auth\CustomPrincipalPlugin;
 use OCA\DAV\CalDAV\InvitationResponse\InvitationResponseServer;
+use OCA\DAV\CalDAV\Schedule\Plugin;
 use OCP\Calendar\Exceptions\CalendarException;
 use OCP\Calendar\ICreateFromString;
 use OCP\Calendar\IHandleImipMessage;
@@ -70,11 +71,11 @@ class CalendarImpl implements ICreateFromString, IHandleImipMessage {
 	}
 
 	public function getSchedulingTransparency(): ?ScheduleCalendarTransp {
-		return $this->calendarInfo['{' . \OCA\DAV\CalDAV\Schedule\Plugin::NS_CALDAV . '}schedule-calendar-transp'];
+		return $this->calendarInfo['{' . Plugin::NS_CALDAV . '}schedule-calendar-transp'];
 	}
 
 	public function getSchedulingTimezone(): ?VTimeZone {
-		$tzProp = '{' . \OCA\DAV\CalDAV\Schedule\Plugin::NS_CALDAV . '}calendar-timezone';
+		$tzProp = '{' . Plugin::NS_CALDAV . '}calendar-timezone';
 		if (!isset($this->calendarInfo[$tzProp])) {
 			return null;
 		}

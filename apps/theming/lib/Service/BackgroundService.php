@@ -19,6 +19,7 @@ use OCP\Files\NotPermittedException;
 use OCP\Files\SimpleFS\ISimpleFile;
 use OCP\Files\SimpleFS\ISimpleFolder;
 use OCP\IConfig;
+use OCP\Image;
 use OCP\Lock\LockedException;
 use OCP\PreConditionNotMetException;
 use RuntimeException;
@@ -247,7 +248,7 @@ class BackgroundService {
 			throw new RuntimeException('No currently logged-in user');
 		}
 
-		$image = new \OCP\Image();
+		$image = new Image();
 		$handle = $this->getAppDataFolder($userId)->getFile('background.jpg')->read();
 		if ($handle === false || $image->loadFromFileHandle($handle) === false) {
 			throw new InvalidArgumentException('Invalid image file');
@@ -322,7 +323,7 @@ class BackgroundService {
 	 * @return string|null The fallback background color - if any
 	 */
 	public function setGlobalBackground($path): ?string {
-		$image = new \OCP\Image();
+		$image = new Image();
 		$handle = is_resource($path) ? $path : fopen($path, 'rb');
 
 		if ($handle && $image->loadFromFileHandle($handle) !== false) {
@@ -339,7 +340,7 @@ class BackgroundService {
 	 * Calculate mean color of an given image
 	 * It only takes the upper part into account so that a matching text color can be derived for the app menu
 	 */
-	private function calculateMeanColor(\OCP\Image $image): false|string {
+	private function calculateMeanColor(Image $image): false|string {
 		/**
 		 * Small helper to ensure one channel is returned as 8byte hex
 		 */
@@ -353,7 +354,7 @@ class BackgroundService {
 			};
 		}
 
-		$tempImage = new \OCP\Image();
+		$tempImage = new Image();
 
 		// Crop to only analyze top bar
 		$resource = $image->cropNew(0, 0, $image->width(), min(max(50, (int)($image->height() * 0.125)), $image->height()));

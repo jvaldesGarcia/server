@@ -14,6 +14,7 @@ use OCA\DAV\Db\AbsenceMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Http\TemplateResponse;
 use OCP\AppFramework\Services\IInitialState;
+use OCP\DB\Exception;
 use OCP\IConfig;
 use OCP\Settings\ISettings;
 use OCP\User\IAvailabilityCoordinator;
@@ -56,7 +57,7 @@ class AvailabilitySettings implements ISettings {
 			} catch (DoesNotExistException) {
 				// The user has not yet set up an absence period.
 				// Logging this error is not necessary.
-			} catch (\OCP\DB\Exception $e) {
+			} catch (Exception $e) {
 				$this->logger->error("Could not find absence data for user $this->userId: " . $e->getMessage(), [
 					'exception' => $e,
 				]);

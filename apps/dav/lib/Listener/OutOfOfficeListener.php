@@ -14,6 +14,7 @@ use DateTimeZone;
 use OCA\DAV\CalDAV\CalDavBackend;
 use OCA\DAV\CalDAV\Calendar;
 use OCA\DAV\CalDAV\CalendarHome;
+use OCA\DAV\CalDAV\Plugin;
 use OCA\DAV\CalDAV\TimezoneService;
 use OCA\DAV\ServerFactory;
 use OCP\EventDispatcher\Event;
@@ -111,7 +112,7 @@ class OutOfOfficeListener implements IEventListener {
 		$invitationServer = $this->serverFactory->createInviationResponseServer(false);
 		$server = $invitationServer->getServer();
 
-		/** @var \OCA\DAV\CalDAV\Plugin $caldavPlugin */
+		/** @var Plugin $caldavPlugin */
 		$caldavPlugin = $server->getPlugin('caldav');
 		$calendarHomePath = $caldavPlugin->getCalendarHomeForPrincipal($principal);
 		if ($calendarHomePath === null) {

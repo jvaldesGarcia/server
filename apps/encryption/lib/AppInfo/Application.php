@@ -7,6 +7,7 @@
  */
 namespace OCA\Encryption\AppInfo;
 
+use OC\Encryption\Manager;
 use OCA\Encryption\Crypto\Crypt;
 use OCA\Encryption\Crypto\DecryptAll;
 use OCA\Encryption\Crypto\EncryptAll;
@@ -40,7 +41,7 @@ class Application extends App implements IBootstrap {
 		\OCP\Util::addScript(self::APP_ID, 'encryption');
 
 		$context->injectFn(function (IManager $encryptionManager) use ($context): void {
-			if (!($encryptionManager instanceof \OC\Encryption\Manager)) {
+			if (!($encryptionManager instanceof Manager)) {
 				return;
 			}
 

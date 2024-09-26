@@ -26,7 +26,7 @@ class BackendServiceTest extends \Test\TestCase {
 	/**
 	 * @param string $class
 	 *
-	 * @return \OCA\Files_External\Lib\Backend\Backend|\PHPUnit\Framework\MockObject\MockObject
+	 * @return Backend|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getBackendMock($class) {
 		$backend = $this->getMockBuilder(Backend::class)
@@ -40,7 +40,7 @@ class BackendServiceTest extends \Test\TestCase {
 	/**
 	 * @param string $class
 	 *
-	 * @return \OCA\Files_External\Lib\Auth\AuthMechanism|\PHPUnit\Framework\MockObject\MockObject
+	 * @return AuthMechanism|\PHPUnit\Framework\MockObject\MockObject
 	 */
 	protected function getAuthMechanismMock($class) {
 		$backend = $this->getMockBuilder(AuthMechanism::class)
@@ -56,7 +56,7 @@ class BackendServiceTest extends \Test\TestCase {
 
 		$backend = $this->getBackendMock('\Foo\Bar');
 
-		/** @var \OCA\Files_External\Lib\Backend\Backend|\PHPUnit\Framework\MockObject\MockObject $backendAlias */
+		/** @var Backend|\PHPUnit\Framework\MockObject\MockObject $backendAlias */
 		$backendAlias = $this->getMockBuilder(Backend::class)
 			->disableOriginalConstructor()
 			->getMock();

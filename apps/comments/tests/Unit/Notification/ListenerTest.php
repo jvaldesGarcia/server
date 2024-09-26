@@ -32,8 +32,8 @@ class ListenerTest extends TestCase {
 	protected function setUp(): void {
 		parent::setUp();
 
-		$this->notificationManager = $this->createMock(\OCP\Notification\IManager::class);
-		$this->userManager = $this->createMock(\OCP\IUserManager::class);
+		$this->notificationManager = $this->createMock(IManager::class);
+		$this->userManager = $this->createMock(IUserManager::class);
 
 		$this->listener = new Listener(
 			$this->notificationManager,

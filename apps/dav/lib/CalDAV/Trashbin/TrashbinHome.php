@@ -9,6 +9,7 @@ declare(strict_types=1);
 namespace OCA\DAV\CalDAV\Trashbin;
 
 use OCA\DAV\CalDAV\CalDavBackend;
+use OCA\DAV\DAV\Sharing\Plugin;
 use Sabre\DAV\Exception\Forbidden;
 use Sabre\DAV\Exception\NotFound;
 use Sabre\DAV\ICollection;
@@ -105,7 +106,7 @@ class TrashbinHome implements IACL, ICollection, IProperties {
 		return [
 			'{DAV:}resourcetype' => new ResourceType([
 				'{DAV:}collection',
-				sprintf('{%s}trash-bin', \OCA\DAV\DAV\Sharing\Plugin::NS_NEXTCLOUD),
+				sprintf('{%s}trash-bin', Plugin::NS_NEXTCLOUD),
 			]),
 		];
 	}
