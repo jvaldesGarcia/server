@@ -17,12 +17,16 @@ use OCP\Comments\ICommentsManager;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\Group\Events\BeforeUserRemovedEvent;
 use OCP\Group\Events\UserRemovedEvent;
+use OCP\Group\ISubAdmin;
 use OCP\IAvatarManager;
 use OCP\IConfig;
+use OCP\IGroupManager;
 use OCP\IImage;
 use OCP\IURLGenerator;
 use OCP\IUser;
 use OCP\IUserBackend;
+use OCP\IUserManager;
+use OCP\IUserSession;
 use OCP\Notification\IManager as INotificationManager;
 use OCP\User\Backend\IGetHomeBackend;
 use OCP\User\Backend\IPasswordHashBackend;
@@ -78,6 +82,18 @@ class User implements IUser {
 	/** @var IURLGenerator */
 	private $urlGenerator;
 
+	/** @var IUserSession */
+	private $userSession;
+
+	/** @var IUserManager */
+	private $userManager;
+
+	/** @var ISubAdmin */
+	private $subAdminManager;
+
+	/** @var IGroupManager */
+	private $groupManager;
+
 	public function __construct(string $uid, ?UserInterface $backend, IEventDispatcher $dispatcher, $emitter = null, ?IConfig $config = null, $urlGenerator = null) {
 		$this->uid = $uid;
 		$this->backend = $backend;
@@ -91,6 +107,10 @@ class User implements IUser {
 			$this->urlGenerator = \OC::$server->getURLGenerator();
 		}
 		$this->dispatcher = $dispatcher;
+		$this->userSession = \OCP\Server::get(IUserSession::class);
+		$this->userManager = \OCP\Server::get(IUserManager::class);
+		$this->subAdminManager = \OCP\Server::get(ISubAdmin::class);
+		$this->groupManager = \OCP\Server::get(IGroupManager::class);
 	}
 
 	/**
@@ -536,13 +556,27 @@ class User implements IUser {
 	}
 
 	public function getManagerUids(): array {
+		$user = $this->userSession->getUser();
+		if (!($user instanceof IUser)) {
+			return [];
+		}
 		$encodedUids = $this->config->getUserValue(
 			$this->uid,
 			'settings',
 			self::CONFIG_KEY_MANAGERS,
-			'[]'
+			'[]',
 		);
-		return json_decode($encodedUids, false, 512, JSON_THROW_ON_ERROR);
+		/** @var string[] $managerUids */
+		$managerUids = json_decode($encodedUids, false, 512, JSON_THROW_ON_ERROR);
+		$userId = $user->getUID();
+		if ($this->groupManager->isAdmin($userId) || $this->groupManager->isDelegatedAdmin($userId)) {
+			return $managerUids;
+		}
+		$accessibleManagers = array_values(array_filter(
+			$managerUids,
+			fn (string $managerUid) => $this->subAdminManager->isUserAccessible($user, $this->userManager->get($managerUid)),
+		));
+		return $accessibleManagers;
 	}
 
 	public function setManagerUids(array $uids): void {
