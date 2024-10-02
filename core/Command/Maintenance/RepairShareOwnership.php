@@ -60,6 +60,7 @@ class RepairShareOwnership extends Command {
 			$output->writeln('');
 
 			if (!$noConfirm) {
+				/** @var QuestionHelper $helper */
 				$helper = $this->getHelper('question');
 				$question = new ConfirmationQuestion('Repair these shares? [y/N]', false);
 

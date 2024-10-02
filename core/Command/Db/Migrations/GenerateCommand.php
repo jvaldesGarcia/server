@@ -117,6 +117,7 @@ class {{classname}} extends SimpleMigrationStep {
 				$output->writeln('<comment> - Actual:   ' . $version . '</comment>');
 
 				if ($input->isInteractive()) {
+					/** @var QuestionHelper $helper */
 					$helper = $this->getHelper('question');
 					$question = new ConfirmationQuestion('Continue with your given version? (y/n) [n] ', false);
 

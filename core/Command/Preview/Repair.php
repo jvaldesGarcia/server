@@ -133,6 +133,7 @@ class Repair extends Command {
 		if ($input->getOption('batch')) {
 			$output->writeln('Batch mode active: migration is started right away.');
 		} else {
+			/** @var QuestionHelper $helper */
 			$helper = $this->getHelper('question');
 			$question = new ConfirmationQuestion('<info>Should the migration be started? (y/[n]) </info>', false);
 

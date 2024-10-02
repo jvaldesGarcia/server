@@ -229,6 +229,7 @@ class SetConfig extends Base {
 	}
 
 	private function ask(InputInterface $input, OutputInterface $output, string $request): bool {
+		/** @var QuestionHelper $helper */
 		$helper = $this->getHelper('question');
 		if ($input->getOption('no-interaction')) {
 			return true;

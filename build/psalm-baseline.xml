@@ -1266,6 +1266,12 @@
       <code><![CDATA[array]]></code>
     </LessSpecificImplementedReturnType>
   </file>
+  <file src="core/Command/Config/App/SetConfig.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$helper]]></code>
+      <code><![CDATA[$helper]]></code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="core/Command/Config/Import.php">
     <InvalidScalarArgument>
       <code><![CDATA[0]]></code>
@@ -1280,11 +1286,23 @@
       <code><![CDATA[getFilteredValues]]></code>
     </TooManyArguments>
   </file>
+  <file src="core/Command/Db/ConvertFilecacheBigInt.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$helper]]></code>
+      <code><![CDATA[$helper]]></code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="core/Command/Db/ConvertType.php">
     <InvalidScalarArgument>
       <code><![CDATA[0]]></code>
       <code><![CDATA[1]]></code>
     </InvalidScalarArgument>
+  </file>
+  <file src="core/Command/Db/Migrations/GenerateCommand.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$helper]]></code>
+      <code><![CDATA[$helper]]></code>
+    </UndefinedDocblockClass>
   </file>
   <file src="core/Command/Encryption/Enable.php">
     <NullArgument>
@@ -1315,7 +1333,17 @@
       <code><![CDATA[updateFilecache]]></code>
     </UndefinedInterfaceMethod>
   </file>
+  <file src="core/Command/Maintenance/RepairShareOwnership.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$helper]]></code>
+      <code><![CDATA[$helper]]></code>
+    </UndefinedDocblockClass>
+  </file>
   <file src="core/Command/Preview/Repair.php">
+    <UndefinedDocblockClass>
+      <code><![CDATA[$helper]]></code>
+      <code><![CDATA[$helper]]></code>
+    </UndefinedDocblockClass>
     <UndefinedInterfaceMethod>
       <code><![CDATA[section]]></code>
       <code><![CDATA[section]]></code>

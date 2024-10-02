@@ -89,6 +89,7 @@ class ConvertFilecacheBigInt extends Command {
 		$output->writeln('<comment>This can take up to hours, depending on the number of files in your instance!</comment>');
 
 		if ($input->isInteractive()) {
+			/** @var QuestionHelper $helper */
 			$helper = $this->getHelper('question');
 			$question = new ConfirmationQuestion('Continue with the conversion (y/n)? [n] ', false);
 
