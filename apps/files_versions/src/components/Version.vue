@@ -5,6 +5,7 @@
 <template>
 	<NcListItem class="version"
 		:force-display-actions="true"
+		:name="versionLabel"
 		:data-files-versions-version="version.fileVersion"
 		@click="click">
 		<!-- Icon -->
