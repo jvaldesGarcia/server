@@ -35,10 +35,10 @@ class Option extends Config {
 	 */
 	protected function getOption(StorageConfig $mount, $key, OutputInterface $output): void {
 		$value = $mount->getMountOption($key);
-		if (!is_string($value)) { // show bools and objects correctly
+		if (!is_string($value) && json_decode(json_encode($value)) === $value) { // show bools and objects correctly
 			$value = json_encode($value);
 		}
-		$output->writeln($value);
+		$output->writeln((string) $value);
 	}
 
 	/**
