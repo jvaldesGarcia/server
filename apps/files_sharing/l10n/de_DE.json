@@ -141,8 +141,8 @@
     "Link copied to clipboard" : "Link wurde in die Zwischenablage kopiert",
     "Email already added" : "E-Mail-Adresse wurde bereits hinzugefügt",
     "Invalid email address" : "Ungültige E-Mail-Adresse",
-    "_1 email address already added_::_{count} email addresses already added_" : ["1 E-Mail-Adresse bereits hinzugefügt","{count} E-Mail-Adressen bereits hinzugefügt"],
-    "_1 email address added_::_{count} email addresses added_" : ["1 E-Mail-Adresse hinzugefügt","{count} E-Mail-Adressen hinzugefügt"],
+    "_{count} email address already added_::_{count} email addresses already added_" : ["{count} E-Mail-Adresse bereits hinzugefügt","{count} E-Mail-Adressen bereits hinzugefügt"],
+    "_{count} email address added_::_{count} email addresses added_" : ["{count} E-Mail-Adresse hinzugefügt","{count} E-Mail-Adressen hinzugefügt"],
     "What are you requesting?" : "Was fragen Sie an?",
     "Request subject" : "Betreff der Anfrage",
     "Birthday party photos, History assignment…" : "Fotos von Geburtstagsfeiern, Geschichtsaufgaben…",
@@ -309,11 +309,11 @@
     "Create file request" : "Dateianfrage erstellen",
     "Upload files to {foldername}" : "Dateien hochladen nach {foldername}",
     "Public file share" : "Öffentliche Dateifreigabe",
-    "Public shared file." : "Öffentlich geteilte Datei.",
+    "Publicly shared file." : "Öffentlich geteilte Datei.",
     "No file" : "Keine Datei",
     "The file shared with you will show up here" : "Die mit Ihnen geteilte Datei wird hier angezeigt",
     "Public share" : "Öffentliche Freigabe",
-    "Public shared files." : "Öffentlich geteilte Dateien.",
+    "Publicly shared files." : "Öffentlich geteilte Dateien.",
     "No files" : "Keine Dateien",
     "Files and folders shared with you will show up here" : "Mit Ihnen geteilte Dateien und Ordner werden hier angezeigt",
     "Overview of shared files." : "Übersicht geteilter Dateien",
@@ -404,6 +404,8 @@
     "the link expired" : "Der Link ist abgelaufen",
     "sharing is disabled" : "Teilen ist deaktiviert",
     "For more info, please ask the person who sent this link." : "Um nähere Informationen zu erhalten, wenden Sie sich bitte an die Person, die Ihnen diesen Link geschickt hat.",
+    "_1 email address already added_::_{count} email addresses already added_" : ["1 E-Mail-Adresse bereits hinzugefügt","{count} E-Mail-Adressen bereits hinzugefügt"],
+    "_1 email address added_::_{count} email addresses added_" : ["1 E-Mail-Adresse hinzugefügt","{count} E-Mail-Adressen hinzugefügt"],
     "Enter your name" : "Geben Sie Ihren Namen ein"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }
