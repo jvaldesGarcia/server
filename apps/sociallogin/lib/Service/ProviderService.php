@@ -26,6 +26,7 @@ use OCP\IURLGenerator;
 use OCP\IUserSession;
 use OCP\IUserManager;
 use OCP\Mail\IMailer;
+use OCA\SocialLogin\Provider\CognitoTokenValidator;
 
 class ProviderService
 {
@@ -301,6 +302,34 @@ class ProviderService
         return $this->auth(self::TYPE_CLASSES[$type], $config, $provider);
     }
 
+    public function handleCustomForToken($type, $provider)
+    {
+        $config = [];
+        $providers = json_decode($this->config->getAppValue($this->appName, 'custom_providers'), true) ?: [];
+        if (isset($providers[$type])) {
+            foreach ($providers[$type] as $prov) {
+                if ($prov['name'] === $provider) {
+                    $callbackUrl = $this->urlGenerator->linkToRouteAbsolute($this->appName.'.login.custom', [
+                        'type'=> $type,
+                        'provider' => $provider
+                    ]);
+                    $config = array_merge([
+                        'callback'          => $callbackUrl,
+                        'default_group'     => $prov['defaultGroup'],
+                    ], $this->applyConfigMapping($type, $prov));
+
+                    if (isset($config['endpoints']['authorize_url']) && strpos($config['endpoints']['authorize_url'], '?') !== false) {
+                        list($authUrl, $authQuery) = explode('?', $config['endpoints']['authorize_url'], 2);
+                        $config['endpoints']['authorize_url'] = $authUrl;
+                        parse_str($authQuery, $config['authorize_url_parameters']);
+                    }
+                    break;
+                }
+            }
+        }
+        return $this->authToken(self::TYPE_CLASSES[$type], $config, $provider);
+    }
+
     private function applyConfigMapping($mapping, $data)
     {
         if (!is_array($mapping)) {
@@ -319,6 +348,73 @@ class ProviderService
         }
         return $result;
     }
+
+
+
+
+
+    private function authToken($class, array $config, $provider, $providerType = null)
+    {
+        if (empty($config)) {
+            if (!$providerType) {
+                $providerType = explode('\\', $class);
+                $providerType = end($providerType);
+            }
+            throw new LoginException($this->l->t('Unknown %s provider: "%s"', [$providerType, $provider]));
+        }
+        
+
+        $curlOptions = [];
+        $httpClientConfig = $this->config->getSystemValue('social_login_http_client', []);
+        
+
+        try {
+
+            $tokenValidator = \OC::$server->get(CognitoTokenValidator::class);
+            $tokenValidator->verifyToken("eyJraWQiOiJDWHVVelNIbCtoYTJrK29xTTZcL09EUGJaaDdHRmZYbVNNVDg1VUlRaWdsWT0iLCJhbGciOiJSUzI1NiJ9.eyJzdWIiOiI3NGI4ZjRiOC1iMGExLTcwMDctZmQxMS0zNmU2Yzg3ZDA1NjgiLCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9CWXUzTFZWamwiLCJ2ZXJzaW9uIjoyLCJjbGllbnRfaWQiOiIzZGdqYWExdWtqajVtMjRycGJwdjVramRvNyIsIm9yaWdpbl9qdGkiOiJhMzIzMzU0OC04YzE0LTQxZTktYTNhMi1mOGMxMDVhMzQ0MTQiLCJldmVudF9pZCI6IjAwMTI5MDQ5LWM1ZGYtNDQ2My1iODdkLWFlODU0ZTQwMjcxOSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwiLCJhdXRoX3RpbWUiOjE3Mjc5MTg0MjcsImV4cCI6MTcyNzkyMjAyNywiaWF0IjoxNzI3OTE4NDI3LCJqdGkiOiJlZWVmOTA4My0xMWJmLTRiNjUtYTgxNi1iNzc5MGI1ZGYyMzQiLCJ1c2VybmFtZSI6Imp2YWxkZXMifQ.jJpj_r0Zv2b2dE_dNq-hVaCeEh1_2cUaY7p8c279TnL0Unej2zr34oGpzPSf95mAb6QpT_k0b6T2wULHchQIjqZjNM6gY6Fs7-Zf_qGutIDArkas84ZGhTc0HxeD2Z2Q7WFA_zPfXfXsPNC4_Bwg7v6XJcDGtywP18XXkJlMw1Xq58wQT49Fxld3Mdc05Cwb8gaf_Zj47fzpzcDIQ5EcGOt2SkMNDqd-6S9MRJXosekCMLBQsYIiwBO3tCffTDCi6A0Rb1-wpGxTbaTaI6zTjksiAcZMqxqDDJ-Yp9Etnon1lxCJ4zA0qnVWcU67NEDPzgsXR2W3","https://cognito-idp.us-east-1.amazonaws.com/us-east-1_BYu3LVVjl/.well-known/jwks.json");
+            $adapter = new $class($config, null, $this->storage);
+            $adapter->authenticate();
+            $profile = $adapter->getUserProfile();
+        }  catch (\Exception $e) {
+            $this->storage->clear();
+            throw new LoginException($e->getMessage());
+        }
+        $profileId = preg_replace('#.*/#', '', rtrim($profile->identifier, '/'));
+        if (empty($profileId)) {
+            $this->storage->clear();
+            throw new LoginException($this->l->t('Can not get identifier from provider'));
+        }
+
+        if (!empty($config['authorize_url_parameters']['hd'])) {
+            $profileHd = preg_match('#@(.+)#', $profile->email, $m) ? $m[1] : null;
+            $allowedHd = array_map('trim', explode(',', $config['authorize_url_parameters']['hd']));
+            if (!in_array($profileHd, $allowedHd)) {
+                $this->storage->clear();
+                throw new LoginException($this->l->t('Login from %s domain is not allowed for %s provider', [$profileHd, $provider]));
+            }
+        }
+
+      
+
+        if (!empty($config['logout_url'])) {
+            $this->session->set('sociallogin_logout_url', $config['logout_url']);
+        } else {
+            $this->session->remove('sociallogin_logout_url');
+        }
+
+        $profile->data['default_group'] = $config['default_group'];
+
+        if ($provider === 'telegram') {
+            $provider = 'tg'; //For backward compatibility
+        }
+        $uid = $provider.'-'.$profileId;
+        if (strlen($uid) > 64 || !preg_match('#^[a-z0-9_.@-]+$#i', $profileId)) {
+            $uid = $provider.'-'.md5($profileId);
+        }
+        return $this->login($uid, $profile, $provider.'-');
+    }
+
+
 
     private function auth($class, array $config, $provider, $providerType = null)
     {

@@ -5,6 +5,7 @@ namespace OCA\SocialLogin\AppInfo;
 use OCA\SocialLogin\AlternativeLogin\DefaultLoginShow;
 use OCA\SocialLogin\Db\ConnectedLoginMapper;
 use OCA\SocialLogin\Service\ProviderService;
+use OCA\SocialLogin\Service\LoginEventListener;
 use OCP\AppFramework\App;
 use OCP\AppFramework\Bootstrap\IBootContext;
 use OCP\AppFramework\Bootstrap\IBootstrap;
@@ -19,6 +20,8 @@ use OCP\User\Events\BeforeUserDeletedEvent;
 use OCP\User\Events\UserLoggedOutEvent;
 use OCP\Util;
 
+//require_once __DIR__ . '/vendor/autoload.php';
+
 class Application extends App implements IBootstrap
 {
     private $appName = 'sociallogin';
@@ -27,6 +30,12 @@ class Application extends App implements IBootstrap
     public function __construct()
     {
         parent::__construct($this->appName);
+
+        $eventDispatcher = $this->getContainer()->query(IEventDispatcher::class);
+        $listenerInstance = $this->getContainer()->query(LoginEventListener::class); // Instantiate the listener
+
+        // Register the listener with the event dispatcher
+        $eventDispatcher->addListener('user.login_attempt', [$listenerInstance, 'handleLoginAttempt']);
     }
 
     public function register(IRegistrationContext $context): void
