@@ -78,6 +78,7 @@ RUN useradd -ms /bin/bash ${APACHE_RUN_USER} && \
     sed -ri "s/^export APACHE_RUN_GROUP=.*$/export APACHE_RUN_GROUP=${APACHE_RUN_GROUP}/" "/etc/apache2/envvars"
 
 USER devcontainer
+RUN chown -R devcontainer:devcontainer /var/www/html
 
 # NVM
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
