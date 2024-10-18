@@ -1,5 +1,5 @@
 # Use an official Nextcloud base image
-FROM nextcloud:latest
+FROM nextcloud:28.0.10
 
 # Set environment variables for Nextcloud
 ENV NEXTCLOUD_VERSION=28.0.10
