@@ -52,21 +52,21 @@ RUN { \
 	echo "xdebug.start_with_request=yes"; \
 } >> /etc/php/8.1/apache2/conf.d/20-xdebug.ini
 
-# Docker
-RUN apt-get -y install \
-    apt-transport-https \
-    ca-certificates \
-    curl \
-    gnupg-agent \
-    software-properties-common && \
+# Update APT and install dependencies
+RUN apt-get update && \
+    apt-get install -y \
+        apt-transport-https \
+        ca-certificates \
+        curl \
+        gnupg-agent \
+        software-properties-common && \
     curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add - && \
     add-apt-repository \
-   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
-   $(lsb_release -cs) \
-   stable" && \
-    apt-get update -y && \
-    apt-get install -y docker-ce docker-ce-cli containerd.io && \
-    ln -s /var/run/docker-host.sock /var/run/docker.sock
+       "deb [arch=arm64] https://download.docker.com/linux/ubuntu \
+       $(lsb_release -cs) \
+       stable" && \
+    apt-get update && \
+    apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # Dedicated DevContainer user runs Apache
 ENV APACHE_RUN_USER=devcontainer
