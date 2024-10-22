@@ -11,7 +11,11 @@ services:
       - 80:80
       - 8080:8080
       - 8025:8025
-
+    environment:
+      XDEBUG_ON: 1
+      XDEBUG_PROFILER_ON: 1
+      # setting xdebug client host for cases where xdebug.discover_client_host fails
+      XDEBUG_CLIENT_HOST: host.docker.internal
   db:
     image: postgres
     restart: always

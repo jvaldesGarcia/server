@@ -49,8 +49,13 @@ RUN echo "xdebug.remote_enable = 1" >> /etc/php/8.1/cli/conf.d/20-xdebug.ini && 
 # Autostart XDebug for apache
 RUN { \
 	echo "xdebug.mode=debug"; \
+    echo "xdebug.log=/var/log/xdebug.log"; \
+    echo "xdebug.client_host=host.docker.internal"; \
+    echo "xdebug.client_port=9003"; \
 	echo "xdebug.start_with_request=yes"; \
 } >> /etc/php/8.1/apache2/conf.d/20-xdebug.ini
+
+
 
 # Update APT and install dependencies
 RUN apt-get update && \
@@ -77,8 +82,15 @@ RUN useradd -ms /bin/bash ${APACHE_RUN_USER} && \
 	sed -ri "s/^export APACHE_RUN_USER=.*$/export APACHE_RUN_USER=${APACHE_RUN_USER}/" "/etc/apache2/envvars" && \
     sed -ri "s/^export APACHE_RUN_GROUP=.*$/export APACHE_RUN_GROUP=${APACHE_RUN_GROUP}/" "/etc/apache2/envvars"
 
-USER devcontainer
+
 RUN chown -R devcontainer:devcontainer /var/www/html
+RUN mkdir -p /var/log
+RUN chmod 777 /var/log
+#RUN sudo chown -R www-data:www-data /var/www/html/apps/sociallogin
+#RUN sudo chmod -R 755 /var/www/html/apps/sociallogin
+USER devcontainer
+
+
 
 # NVM
 RUN curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
