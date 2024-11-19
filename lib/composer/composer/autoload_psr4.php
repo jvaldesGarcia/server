@@ -9,5 +9,7 @@ return array(
     'OC\\Core\\' => array($baseDir . '/core'),
     'OC\\' => array($baseDir . '/lib/private'),
     'OCP\\' => array($baseDir . '/lib/public'),
+    'OCA\\SocialLogin\\' => array($baseDir . '/apps/sociallogincust/lib'),
+    'Bamarni\\Composer\\Bin\\' => array($vendorDir . '/bamarni/composer-bin-plugin/src'),
     '' => array($baseDir . '/lib/private/legacy'),
 );

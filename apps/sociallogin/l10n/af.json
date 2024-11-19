@@ -1,8 +1,0 @@
-{ "translations": {
-    "Save" : "Bewaar",
-    "None" : "Geen",
-    "Secret" : "Geheim",
-    "Title" : "Titel",
-    "Client Secret" : "Kliënt-geheim"
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
-}

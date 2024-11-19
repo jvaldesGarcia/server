@@ -1138,17 +1138,23 @@ class OC {
 		}
 		$userSession = Server::get(\OC\User\Session::class);
 
+		/*
+		
+		
 		// Dispatch a custom event
-		$eventDispatcher = \OC::$server->get(IEventDispatcher::class);
-		$event = new LoginAttemptEvent($request);
+		$eventDispatcher = \OC::$server->get(IEventDispatcher::class);	
+		$event = \OCP\Server::get(\OCA\SocialLogin\Service\LoginAttemptEvent::class);
+		$event->Init($request);
+		//$event = new LoginAttemptEvent($request);		
 		$eventDispatcher->dispatch('user.login_attempt', $event);
-
 		// Check if any listener marked the login as successful
 		if ($event->isLoginSuccess()) {
 			if ($userSession->tryTokenLogin($request)) {
 				return true;
 			}			
 		}
+        */
+
 
 		if (OC_User::handleApacheAuth()) {
 			return true;

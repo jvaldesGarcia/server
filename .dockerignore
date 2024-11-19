@@ -1,0 +1,7 @@
+# Ignore .git folder
+.git
+
+# Optionally, ignore other things you don't need in your image
+node_modules
+logs
+tmp

@@ -16,6 +16,11 @@ class ComposerStaticInit749170dad3f5e7f9ca158f5a9f04f6a2
             'OC\\Core\\' => 8,
             'OC\\' => 3,
             'OCP\\' => 4,
+            'OCA\\SocialLogin\\' => 16,
+        ),
+        'B' => 
+        array (
+            'Bamarni\\Composer\\Bin\\' => 21,
         ),
     );
 
@@ -32,6 +37,14 @@ class ComposerStaticInit749170dad3f5e7f9ca158f5a9f04f6a2
         array (
             0 => __DIR__ . '/../../..' . '/lib/public',
         ),
+        'OCA\\SocialLogin\\' => 
+        array (
+            0 => __DIR__ . '/../../..' . '/apps/sociallogincust/lib',
+        ),
+        'Bamarni\\Composer\\Bin\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src',
+        ),
     );
 
     public static $fallbackDirsPsr4 = array (
@@ -39,7 +52,48 @@ class ComposerStaticInit749170dad3f5e7f9ca158f5a9f04f6a2
     );
 
     public static $classMap = array (
+        'Bamarni\\Composer\\Bin\\ApplicationFactory\\FreshInstanceApplicationFactory' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/ApplicationFactory/FreshInstanceApplicationFactory.php',
+        'Bamarni\\Composer\\Bin\\ApplicationFactory\\NamespaceApplicationFactory' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/ApplicationFactory/NamespaceApplicationFactory.php',
+        'Bamarni\\Composer\\Bin\\BamarniBinPlugin' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/BamarniBinPlugin.php',
+        'Bamarni\\Composer\\Bin\\CommandProvider' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/CommandProvider.php',
+        'Bamarni\\Composer\\Bin\\Command\\BinCommand' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Command/BinCommand.php',
+        'Bamarni\\Composer\\Bin\\Command\\CouldNotCreateNamespaceDir' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Command/CouldNotCreateNamespaceDir.php',
+        'Bamarni\\Composer\\Bin\\Config\\Config' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Config/Config.php',
+        'Bamarni\\Composer\\Bin\\Config\\ConfigFactory' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Config/ConfigFactory.php',
+        'Bamarni\\Composer\\Bin\\Config\\InvalidBamarniComposerExtraConfig' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Config/InvalidBamarniComposerExtraConfig.php',
+        'Bamarni\\Composer\\Bin\\Input\\BinInputFactory' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Input/BinInputFactory.php',
+        'Bamarni\\Composer\\Bin\\Input\\InvalidBinInput' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Input/InvalidBinInput.php',
+        'Bamarni\\Composer\\Bin\\Logger' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/Logger.php',
+        'Bamarni\\Composer\\Bin\\PublicIO' => __DIR__ . '/..' . '/bamarni/composer-bin-plugin/src/PublicIO.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
+        'OCA\\SocialLogin\\AlternativeLogin\\DefaultLoginShow' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/AlternativeLogin/DefaultLoginShow.php',
+        'OCA\\SocialLogin\\AlternativeLogin\\SocialLogin' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/AlternativeLogin/SocialLogin.php',
+        'OCA\\SocialLogin\\AlternativeLogin\\TelegramLogin' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/AlternativeLogin/TelegramLogin.php',
+        'OCA\\SocialLogin\\AppInfo\\Application' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/AppInfo/Application.php',
+        'OCA\\SocialLogin\\Controller\\ApiController' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Controller/ApiController.php',
+        'OCA\\SocialLogin\\Controller\\LinkController' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Controller/LinkController.php',
+        'OCA\\SocialLogin\\Controller\\LoginController' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Controller/LoginController.php',
+        'OCA\\SocialLogin\\Controller\\SettingsController' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Controller/SettingsController.php',
+        'OCA\\SocialLogin\\Db\\ConnectedLogin' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Db/ConnectedLogin.php',
+        'OCA\\SocialLogin\\Db\\ConnectedLoginMapper' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Db/ConnectedLoginMapper.php',
+        'OCA\\SocialLogin\\Migration\\OneKeyCustomProviders' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/OneKeyCustomProviders.php',
+        'OCA\\SocialLogin\\Migration\\ProvidersDefaultGroup' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/ProvidersDefaultGroup.php',
+        'OCA\\SocialLogin\\Migration\\SeparateProvidersNameAndTitle' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/SeparateProvidersNameAndTitle.php',
+        'OCA\\SocialLogin\\Migration\\TelegramToProviders' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/TelegramToProviders.php',
+        'OCA\\SocialLogin\\Migration\\Version040400Date20210410094126' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/Version040400Date20210410094126.php',
+        'OCA\\SocialLogin\\Migration\\Version050400Date20230207014155' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Migration/Version050400Date20230207014155.php',
+        'OCA\\SocialLogin\\Provider\\CognitoTokenValidator' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Provider/CognitoTokenValidator.php',
+        'OCA\\SocialLogin\\Provider\\CustomDiscourse' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Provider/CustomDiscourse.php',
+        'OCA\\SocialLogin\\Provider\\CustomOAuth1' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Provider/CustomOAuth1.php',
+        'OCA\\SocialLogin\\Provider\\CustomOAuth2' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Provider/CustomOAuth2.php',
+        'OCA\\SocialLogin\\Provider\\CustomOpenIDConnect' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Provider/CustomOpenIDConnect.php',
+        'OCA\\SocialLogin\\Service\\LoginAttemptEvent' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Service/LoginAttemptEvent.php',
+        'OCA\\SocialLogin\\Service\\LoginEventListener' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Service/LoginEventListener.php',
+        'OCA\\SocialLogin\\Service\\ProviderService' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Service/ProviderService.php',
+        'OCA\\SocialLogin\\Service\\SessionStorage' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Service/SessionStorage.php',
+        'OCA\\SocialLogin\\Settings\\AdminSection' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Settings/AdminSection.php',
+        'OCA\\SocialLogin\\Settings\\AdminSettings' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Settings/AdminSettings.php',
+        'OCA\\SocialLogin\\Settings\\PersonalSettings' => __DIR__ . '/../../..' . '/apps/sociallogincust/lib/Settings/PersonalSettings.php',
         'OCP\\Accounts\\IAccount' => __DIR__ . '/../../..' . '/lib/public/Accounts/IAccount.php',
         'OCP\\Accounts\\IAccountManager' => __DIR__ . '/../../..' . '/lib/public/Accounts/IAccountManager.php',
         'OCP\\Accounts\\IAccountProperty' => __DIR__ . '/../../..' . '/lib/public/Accounts/IAccountProperty.php',

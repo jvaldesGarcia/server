@@ -1,11 +1,11 @@
 # Use an official Nextcloud base image
-FROM nextcloud:28.0.10
+FROM nextcloud:28-apache
 
 # Set environment variables for Nextcloud
 ENV NEXTCLOUD_VERSION=28.0.10
 
 # Copy your custom Nextcloud application files to the image
-COPY . /var/www/html/
+COPY / /var/www/html/
 
 # Set proper permissions for Nextcloud
 RUN chown -R www-data:www-data /var/www/html \

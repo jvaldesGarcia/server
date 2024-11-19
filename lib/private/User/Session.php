@@ -835,8 +835,22 @@ class Session implements IUserSession, Emitter {
 	 */
 	public function tryTokenLogin(IRequest $request) {
 		$authHeader = $request->getHeader('Authorization');
+
+		// Check if $request->getHeader('Authorization') returned an empty string or null
+		if (empty($authHeader)) {
+			// If empty, fall back to using getallheaders()
+			$headers = getallheaders();
+			
+			// Look for the Authorization header in the headers array
+			if (isset($headers['Authorization'])) {
+				$authHeader = $headers['Authorization'];
+			} elseif (isset($headers['authorization'])) {
+				$authHeader = $headers['authorization'];
+			}
+		}
+        
 		if (str_starts_with($authHeader, 'Bearer ')) {
-			$token = substr($authHeader, 7);
+			$token = $this->session->getId();
 		} elseif ($request->getCookie($this->config->getSystemValueString('instanceid')) !== null) {
 			// No auth header, let's try session id, but only if this is an existing
 			// session and the request has a session cookie

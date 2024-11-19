@@ -1,9 +1,0 @@
-{ "translations": {
-    "Save" : "Gem",
-    "None" : "Ingen",
-    "Secret" : "Hemmelighed",
-    "Title" : "Titel",
-    "Client Secret" : "Klient-Secret",
-    "Scope" : "Anvendelsesområde"
-},"pluralForm" :"nplurals=2; plural=(n != 1);"
-}
